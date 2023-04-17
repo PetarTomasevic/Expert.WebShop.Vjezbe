@@ -1,0 +1,32 @@
+﻿@page "/Admin/category-list"
+@using Expert.WebShop.Vjezbe.Models;
+@inject HttpClient httpClient;
+
+<h3>CategoryList</h3>
+@foreach(Category item in categories)
+{
+    @item.CategoryName
+    <br />
+    @item.CategoryDescription
+    <br />
+    @item.IsHidden
+    <br />
+    @item.ImagePath
+    
+}
+
+
+@code {
+    private List<Category> categories = new List<Category>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await httpClient.GetAsync("https://expertshopapi.azurewebsites.net/api/Categories");
+        if (result.IsSuccessStatusCode)
+        {
+            categories =await result.Content.ReadFromJsonAsync<List<Category>>();
+
+        }
+    }
+
+}
