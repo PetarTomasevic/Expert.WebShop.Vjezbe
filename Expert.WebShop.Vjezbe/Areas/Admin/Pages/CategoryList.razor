@@ -1,19 +1,33 @@
 ﻿@page "/Admin/category-list"
 @using Expert.WebShop.Vjezbe.Models;
 @inject HttpClient httpClient;
+@inject NavigationManager navManager;
 
 <h3>CategoryList</h3>
-@foreach(Category item in categories)
-{
-    @item.CategoryName
-    <br />
-    @item.CategoryDescription
-    <br />
-    @item.IsHidden
-    <br />
-    @item.ImagePath
+<button type="button" @onclick="AddCategory" class="btn btn-info" >Add New</button>
+    <ul>
+        @foreach (var item in categories)
+        {
+            <li>
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            @item.CategoryName
+
+                        </h5>
+
+                        <p class="card-text"> @item.CategoryDescription</p>
+                        <br>
+                    <button type="button" @onclick="()=>EditCategory(item.Id)" class="btn btn-primary" >Edit</button>
+                    <button type="button" @onclick="()=>DeleteCategory(item.Id)" class="btn btn-danger">Delete</button>
+
+                </div>
+                </div>
+            </li>
+        }
+    </ul>
     
-}
+
 
 
 @code {
@@ -27,6 +41,22 @@
             categories =await result.Content.ReadFromJsonAsync<List<Category>>();
 
         }
+    }
+
+    public async void AddCategory()
+    {
+        navManager.NavigateTo("/Admin/add-category");
+
+    }
+    public async void EditCategory(int id)
+    {
+        navManager.NavigateTo($"/Admin/edit-category/{id}");
+
+    }
+    public async void DeleteCategory(int id)
+    {
+        navManager.NavigateTo($"/Admin/delete-category/{id}");
+
     }
 
 }

@@ -1,0 +1,69 @@
+﻿@page "/Admin/edit-category/{id:int}"
+@using Expert.WebShop.Vjezbe.Models;
+@inject HttpClient httpClient;
+@inject NavigationManager navManager;
+<h3>EditCategory</h3>
+<form @onsubmit="CategoryEdit">
+    <div class="row mb-3">
+        <label for="CategoryName" class="col-sm-2 col-form-label">Category Name</label>
+        <div class="col-sm-10">
+            <input type="text" @bind-value="category.CategoryName" class="form-control" id="CategoryName">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="CategoryDescription" class="col-sm-2 col-form-label">Category Description</label>
+        <div class="col-sm-10">
+            <input type="text" @bind-value="category.CategoryDescription" class="form-control" id="CategoryDescription">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="ImagePath" class="col-sm-2 col-form-label">Image Path</label>
+        <div class="col-sm-10">
+            <input type="url" @bind-value="category.ImagePath" class="form-control" id="ImagePath">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-10 offset-sm-2">
+            <div class="form-check">
+                <input class="form-check-input" @bind-value="category.IsHidden" type="checkbox" id="IsHidden">
+                <label class="form-check-label" for="IsHidden">
+                    Is Hidden
+                </label>
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Category</button>
+
+</form>
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Category category = new Category();
+    private bool IsError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var result = await httpClient.GetAsync($"https://expertshopapi.azurewebsites.net/api/Categories/{Id}");
+        if(result.IsSuccessStatusCode)
+        {
+            category = await result.Content.ReadFromJsonAsync<Category>();
+        }
+    }
+
+   
+    private async Task CategoryEdit()
+    {
+        var result = await httpClient.PutAsJsonAsync($"https://expertshopapi.azurewebsites.net/api/Categories/{Id}", category);
+
+        if (result.IsSuccessStatusCode)
+        {
+            navManager.NavigateTo("Admin/category-list");
+        }
+        else
+        {
+            IsError = true;
+            StateHasChanged();
+        }
+    }
+}

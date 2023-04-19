@@ -1,0 +1,45 @@
+﻿@page "/Admin/delete-category/{id:int}"
+@using Expert.WebShop.Vjezbe.Models;
+@inject HttpClient httpClient;
+@inject NavigationManager navManager;
+<h3>DeleteCategory</h3>
+
+<div>
+    @category.CategoryName
+    <br />
+    @category.CategoryDescription
+    <br />
+    @category.IsHidden
+
+    <button type="button" class="btn-danger" @onclick="()=>Delete(category.Id)">
+        Obriši
+     </button>
+</div>
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Category category = new Category();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await httpClient.GetAsync($"https://expertshopapi.azurewebsites.net/api/Categories/{Id}");
+        if (result.IsSuccessStatusCode)
+        {
+            category =await result.Content.ReadFromJsonAsync<Category>();  
+        }
+
+    }
+
+    private async Task Delete(int id)
+    {
+
+        var result = await httpClient.DeleteAsync($"https://expertshopapi.azurewebsites.net/api/Categories/{Id}");
+
+        if(result.IsSuccessStatusCode)
+        {
+            navManager.NavigateTo("Admin/category-list");
+        }
+    }
+}
