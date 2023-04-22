@@ -1,0 +1,30 @@
+﻿@page "/product-details/{id:int}"
+@inject HttpClient httpClient;
+@using Models;
+<h3>Details</h3>
+<p>
+@productDetails.ProductName
+</p>
+<p>@productDetails.ProductDescription</p>
+<p>@productDetails.ProductPrice</p>
+<p>@productDetails.Discount</p>
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Product productDetails = new Product();
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await httpClient.GetAsync($"https://expertshopapi.azurewebsites.net/api/Products/{Id}");
+        if (result.IsSuccessStatusCode)
+        {
+            productDetails = await result.Content.ReadFromJsonAsync<Product>();
+        }
+
+    }
+
+
+
+
+}

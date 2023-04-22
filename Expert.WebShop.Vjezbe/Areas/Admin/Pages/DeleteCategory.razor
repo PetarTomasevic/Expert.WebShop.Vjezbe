@@ -13,7 +13,7 @@
 
     <button type="button" class="btn-danger" @onclick="()=>Delete(category.Id)">
         Obriši
-     </button>
+    </button>
 </div>
 
 
@@ -27,7 +27,7 @@
         var result = await httpClient.GetAsync($"https://expertshopapi.azurewebsites.net/api/Categories/{Id}");
         if (result.IsSuccessStatusCode)
         {
-            category =await result.Content.ReadFromJsonAsync<Category>();  
+            category = await result.Content.ReadFromJsonAsync<Category>();
         }
 
     }
@@ -37,7 +37,7 @@
 
         var result = await httpClient.DeleteAsync($"https://expertshopapi.azurewebsites.net/api/Categories/{Id}");
 
-        if(result.IsSuccessStatusCode)
+        if (result.IsSuccessStatusCode)
         {
             navManager.NavigateTo("Admin/category-list");
         }
