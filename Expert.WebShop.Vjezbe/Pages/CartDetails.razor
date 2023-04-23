@@ -1,0 +1,53 @@
+﻿@page "/shopping-cart"
+@using Models;
+@inject ShoppingCartInMemory shoppingCartInMemory
+<h3>CartDetails</h3>
+@{
+    double sum = 0;
+}
+<ul>
+   
+@foreach (var item in shoppingCartInMemory.selectedItems)
+{
+    <li>
+        <div>
+            @item.ProductName
+          <p>
+              @item.ProductDescription
+          </p>
+          <p>
+              Cijena: @item.ProductPrice
+
+          </p>
+          <p>
+                    @{
+                        if (item.Discount<1)
+                        {
+                            @item.ProductPrice
+                        }
+                        else
+                        {
+                        var discount = ((Convert.ToDouble(item.Discount) / 100) 
+                    * Convert.ToDouble(item.ProductPrice));
+                    var result = Math
+                    .Round(Convert.ToDouble(item.ProductPrice) - discount, 2);
+                    sum = sum + result;
+                    <div>
+                        @item.ProductName
+                        <br>
+                       Discounted price: @result (Original price: 
+                           @item.ProductPrice / Discount: @item.Discount "%"
+                    </div>
+                        }
+}
+                </p>
+        </div>
+    </li>
+}
+</ul>
+<p>
+    Ukupno cijena za proizvode: @sum 
+</p>
+@code {
+
+}

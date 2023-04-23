@@ -1,5 +1,6 @@
 ﻿@page "/product-details/{id:int}"
 @inject HttpClient httpClient;
+@inject ShoppingCartInMemory shoppingCartInMemory
 @using Models;
 <h3>Details</h3>
 <p>
@@ -9,6 +10,7 @@
 <p>@productDetails.ProductPrice</p>
 <p>@productDetails.Discount</p>
 
+<button class="btn-info" @onclick="()=>shoppingCartInMemory.AddToShoppingCart(productDetails.Id)">Dodaj u košaricu</button>
 
 @code {
     [Parameter]
