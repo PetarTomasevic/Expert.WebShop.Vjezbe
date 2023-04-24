@@ -1,7 +1,66 @@
-﻿@page "/Admin/product-list"
-
+﻿@page "/Admin/list-products"
+@using Expert.WebShop.Vjezbe.Models;
+@inject HttpClient httpClient;
+@inject NavigationManager navigationManager;
 <h3>ProductList</h3>
+<ul>
+    @foreach (var item in products)
+    {
+        <li>
+            <div>
+                @item.ProductName
+                <br>
+                @item.ProductDescription
+                <button @onclick="()=>Edit(item.Id)">Edit</button>
 
+            </div>
+            <div>
+                @{
+                    var images = productImages.Where(x => x.ProductId == item.Id).ToList();
+                    foreach (var image in images)
+                    {
+                        <img src="@image.imagePath" width="200px;" />
+                    }
+                }
+            </div>
+        </li>
+    }
+</ul>
 @code {
+    private List<Product> products = new List<Product>();
+    private List<ImageFilePath> productImages = new List<ImageFilePath>();
 
+
+    protected override async Task OnInitializedAsync()
+    {
+        var apiResult = await httpClient.GetAsync("https://expertshopapi.azurewebsites.net/api/Products");
+        if (apiResult.IsSuccessStatusCode)
+        {
+            products = await apiResult.Content.ReadFromJsonAsync<List<Product>>();
+
+            foreach (var item in products)
+            {
+                var getImg = await GetImages(item.Id);
+                productImages.AddRange(getImg);
+            }
+        }
+    }
+
+    public async Task<List<ImageFilePath>> GetImages(int id)
+    {
+        var apiResult = await httpClient.GetAsync($"https://expertshopapi.azurewebsites.net/api/FileUpload/GetProductPhotos/{id}");
+        var images = new List<ImageFilePath>();
+        if (apiResult.IsSuccessStatusCode)
+        {
+            images = await apiResult.Content.ReadFromJsonAsync<List<ImageFilePath>>();
+
+        }
+        return images;
+
+    }
+
+    public async void Edit(int id)
+    {
+        navigationManager.NavigateTo($"Admin/edit-product/{id}");
+    }
 }
