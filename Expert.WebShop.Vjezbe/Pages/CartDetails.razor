@@ -7,36 +7,49 @@
 }
 <ul>
    
-@foreach (var item in shoppingCartInMemory.selectedItems)
+@foreach (var item in shoppingCartInMemory.selectedItems.OrderBy(x=>x.ProductId))
 {
     <li>
         <div>
-            @item.ProductName
+            @item.Product.ProductName
           <p>
-              @item.ProductDescription
+              @item.Product.ProductDescription
           </p>
           <p>
-              Cijena: @item.ProductPrice
+              Cijena: @item.Product.ProductPrice
 
           </p>
           <p>
                     @{
-                        if (item.Discount<1)
+                        if (item.Product.Discount<1)
                         {
-                            @item.ProductPrice
+                            var sumItem = Convert.ToDouble(item.Product.ProductPrice) 
+                            * Convert.ToDouble(item.NumberOfItems);
+                            sum = sum + sumItem;
+                            <p>
+                            Product price: @sumItem
+                            </p>
                         }
                         else
                         {
-                        var discount = ((Convert.ToDouble(item.Discount) / 100) 
-                    * Convert.ToDouble(item.ProductPrice));
-                    var result = Math
-                    .Round(Convert.ToDouble(item.ProductPrice) - discount, 2);
-                    sum = sum + result;
+                            var discount = ((Convert.ToDouble(item.Product.Discount) / 100) 
+                        * Convert.ToDouble(item.Product.ProductPrice));
+                            var result = Math
+                            .Round(Convert.ToDouble(item.Product.ProductPrice) - discount, 2);
+                            result = result * item.NumberOfItems;
+                            sum = sum + result
+                            ;
                     <div>
-                        @item.ProductName
+                        @item.Product.ProductName
                         <br>
                        Discounted price: @result (Original price: 
-                           @item.ProductPrice / Discount: @item.Discount "%"
+                           @item.Product.ProductPrice * @item.NumberOfItems / Discount: @item.Product.Discount "%"
+                    </div>
+
+                    <div>
+                                <button type="button" @onclick="()=>Decrement(item.ProductId)">-</button>
+                            <input type="number" @bind-value="item.NumberOfItems" width="30px;" disabled="disabled">
+                    <button type="button" @onclick="()=>Increment(item.ProductId)">+</button>
                     </div>
                         }
 }
@@ -49,5 +62,26 @@
     Ukupno cijena za proizvode: @sum 
 </p>
 @code {
+    public async Task Decrement(int prodId)
+    {
+        var decrease = shoppingCartInMemory.selectedItems.FirstOrDefault(x => x.ProductId == prodId);
+        
+        if (decrease.NumberOfItems > 1)
+        {
+        shoppingCartInMemory.selectedItems.Remove(decrease);
+        decrease.NumberOfItems = decrease.NumberOfItems - 1;
+        shoppingCartInMemory.selectedItems.Add(decrease);
+        StateHasChanged();
+            }
+    }
 
+    public async Task Increment(int prodId)
+    {
+        var decrease = shoppingCartInMemory.selectedItems.FirstOrDefault(x => x.ProductId == prodId);
+        shoppingCartInMemory.selectedItems.Remove(decrease);
+
+        decrease.NumberOfItems = decrease.NumberOfItems + 1;
+        shoppingCartInMemory.selectedItems.Add(decrease);
+        StateHasChanged();
+    }
 }

@@ -6,7 +6,7 @@ namespace Expert.WebShop.Vjezbe.Models
     public class ShoppingCartInMemory
     {
         private readonly HttpClient _httpClient;
-        public List<Product> selectedItems { get; set; } = new();
+        public List<ShoppingCart> selectedItems { get; set; } = new();
 
         //konstruktor klase
         public ShoppingCartInMemory(HttpClient httpClient)
@@ -21,14 +21,22 @@ namespace Expert.WebShop.Vjezbe.Models
         /// <returns></returns>
         public async Task AddToShoppingCart(int productId)
         {
-            //ovo mi je komentar
-            var result = await _httpClient
-                .GetAsync($"https://expertshopapi.azurewebsites.net/api/Products/{productId}");
-
-            if (result.IsSuccessStatusCode)
+            if (selectedItems
+                .FirstOrDefault(x => x.ProductId == productId) == null)
             {
-                var addProduct = await result.Content.ReadFromJsonAsync<Product>();
-                selectedItems.Add(addProduct);
+                //ovo mi je komentar
+                var result = await _httpClient
+                    .GetAsync($"https://expertshopapi.azurewebsites.net/api/Products/{productId}");
+
+                if (result.IsSuccessStatusCode)
+                {
+                    var addProduct = await result.Content.ReadFromJsonAsync<Product>();
+                    ShoppingCart addToList = new ShoppingCart();
+                    addToList.Product = addProduct; ;
+                    addToList.ProductId = addProduct.Id;
+                    addToList.NumberOfItems = 1;
+                    selectedItems.Add(addToList);
+                }
             }
         }
     }
