@@ -2,6 +2,8 @@
 @using Models;
 @inject ShoppingCartInMemory shoppingCartInMemory
 <h3>CartDetails</h3>
+
+<h4>Total cash: @sumDiscount Eur</h4>
 @{
     double sum = 0;
 }
@@ -62,17 +64,25 @@
     Ukupno cijena za proizvode: @sum 
 </p>
 @code {
+
+    double sumDiscount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Discount();
+    }
     public async Task Decrement(int prodId)
     {
         var decrease = shoppingCartInMemory.selectedItems.FirstOrDefault(x => x.ProductId == prodId);
-        
+
         if (decrease.NumberOfItems > 1)
         {
-        shoppingCartInMemory.selectedItems.Remove(decrease);
-        decrease.NumberOfItems = decrease.NumberOfItems - 1;
-        shoppingCartInMemory.selectedItems.Add(decrease);
-        StateHasChanged();
-            }
+            shoppingCartInMemory.selectedItems.Remove(decrease);
+            decrease.NumberOfItems = decrease.NumberOfItems - 1;
+            shoppingCartInMemory.selectedItems.Add(decrease);
+            await Discount();
+            StateHasChanged();
+        }
     }
 
     public async Task Increment(int prodId)
@@ -82,6 +92,36 @@
 
         decrease.NumberOfItems = decrease.NumberOfItems + 1;
         shoppingCartInMemory.selectedItems.Add(decrease);
+        await Discount();
         StateHasChanged();
+    }
+
+    public async Task Discount()
+    {
+        sumDiscount = 0;
+        foreach (var item in shoppingCartInMemory.selectedItems.OrderBy(x => x.ProductId))
+        {
+            if (item.Product.Discount < 1)
+            {
+                sumDiscount = sumDiscount+ Convert.ToDouble(item.Product.ProductPrice) *
+            Convert.ToDouble(item.NumberOfItems);
+
+            }
+            else
+            {
+
+                var getPrice = Convert.ToDouble(item.Product.ProductPrice);
+
+                var discount = ((Convert.ToDouble(item.Product.Discount) / 100) *
+                Convert.ToDouble(item.Product.ProductPrice));
+
+                getPrice = Math.Round(Convert.ToDouble(item.Product.ProductPrice) - discount, 2);
+
+                sumDiscount = sumDiscount + (getPrice * item.NumberOfItems);
+
+
+            }
+
+        }
     }
 }
