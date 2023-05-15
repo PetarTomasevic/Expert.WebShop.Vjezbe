@@ -1,3 +1,4 @@
+``` sql
 USE [WebShop]
 GO
 /****** Object:  Table [dbo].[Category]    Script Date: 15.5.2023. 16:04:40 ******/
@@ -67,3 +68,6 @@ REFERENCES [dbo].[Product] ([Id])
 GO
 ALTER TABLE [dbo].[ShoppingCard] CHECK CONSTRAINT [FK_ShoppingCard_Product]
 GO
+
+
+```
