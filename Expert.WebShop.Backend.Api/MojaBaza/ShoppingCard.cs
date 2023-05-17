@@ -14,6 +14,7 @@ public partial class ShoppingCard
     public string OrderedByEmail { get; set; } = null!;
 
     public string OrderId { get; set; } = null!;
+    public int NumberOfItems { get; set; }
 
     public virtual Product Product { get; set; } = null!;
 }

@@ -1,6 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Expert.WebShop.Backend.Api.MojaBaza;
 

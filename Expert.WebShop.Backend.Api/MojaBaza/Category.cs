@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Text.Json.Serialization;
+using System;
 using System.Collections.Generic;
 
 namespace Expert.WebShop.Backend.Api.MojaBaza;
@@ -15,5 +16,6 @@ public partial class Category
 
     public string? ImagePath { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }
