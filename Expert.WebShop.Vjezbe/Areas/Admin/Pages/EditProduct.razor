@@ -45,7 +45,7 @@
                 ms.Close();
 
                 var upload = await Http.PostAsJsonAsync<UploadedFile>
-        ("https://expertshopapi.azurewebsites.net/api/FileUpload", uploadedFile);
+        ("https://localhost:7005/api/FilesUpload", uploadedFile);
 
                 if (upload.IsSuccessStatusCode)
                 {
