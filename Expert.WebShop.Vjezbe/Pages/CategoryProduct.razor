@@ -47,7 +47,8 @@
 
     public async Task<Category> GetCategory(int categoryId)
     {
-        var result = await httpClient.GetAsync($"https://expertshopapi.azurewebsites.net/api/Categories/{Id}");
+        var baseUrl=Constants.BaseUrl;
+        var result = await httpClient.GetAsync($"{baseUrl}/Categories/{Id}");
         if (result.IsSuccessStatusCode)
         {
             category = await result.Content.ReadFromJsonAsync<Category>();
@@ -58,7 +59,7 @@
 
     public async Task<List<Product>> GetProducts(int categoryId)
     {
-        var proizvodresult = await httpClient.GetAsync($"https://expertshopapi.azurewebsites.net/api/Products/category-products/{Id}");
+        var proizvodresult = await httpClient.GetAsync($"{Constants.BaseUrl}/Products/category-products/{Id}");
         if (proizvodresult.IsSuccessStatusCode)
         {
             products = await proizvodresult.Content.ReadFromJsonAsync<List<Product>>();

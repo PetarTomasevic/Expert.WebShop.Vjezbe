@@ -18,7 +18,7 @@
     private Product productDetails = new Product();
     protected override async Task OnInitializedAsync()
     {
-        var result = await httpClient.GetAsync($"https://expertshopapi.azurewebsites.net/api/Products/{Id}");
+        var result = await httpClient.GetAsync($"{Constants.BaseUrl}/Products/{Id}");
         if (result.IsSuccessStatusCode)
         {
             productDetails = await result.Content.ReadFromJsonAsync<Product>();

@@ -1,14 +1,16 @@
 using Azure.Core;
 using Expert.WebShop.Backend.Api.MojaBaza;
+using Microsoft.DotNet.Scaffolding.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var dbConnectionString = builder.Configuration.
+    GetValue<string>("ConnectionString");
 // Add services to the container.
 builder.Services.AddDbContext<WebShopVjezba2Context>
     (options => options.
-    UseSqlServer("Data Source=DESKTOP-2GP0R2M;Initial Catalog=WebShopVjezba2;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"));
+    UseSqlServer(dbConnectionString));
 builder.Services.AddControllers();
 
 builder.Services.AddDirectoryBrowser();
