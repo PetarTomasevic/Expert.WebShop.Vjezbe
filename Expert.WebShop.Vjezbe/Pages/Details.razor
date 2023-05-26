@@ -1,6 +1,7 @@
-﻿@page "/product-details/{id:int}"
+﻿@page "/product-details/{id:int}/{categoryName}"
 @inject HttpClient httpClient;
 @inject ShoppingCartInMemory shoppingCartInMemory
+@inject NavigationManager navManager;
 @using Models;
 <h3>Details</h3>
 <p>
@@ -12,9 +13,13 @@
 
 <button class="btn-info" @onclick="()=>shoppingCartInMemory.AddToShoppingCart(productDetails.Id)">Dodaj u košaricu</button>
 
+
+<button type="button" @onclick="Natrag">Natrag na listu</button>
 @code {
     [Parameter]
     public int Id { get; set; }
+    [Parameter]
+    public string CategoryName { get; set; }
     private Product productDetails = new Product();
     protected override async Task OnInitializedAsync()
     {
@@ -26,7 +31,11 @@
 
     }
 
+    public async Task Natrag()
+    {
+        navManager.NavigateTo($"/category/{productDetails.CategoryId}/{CategoryName}");
 
+    }
 
 
 }

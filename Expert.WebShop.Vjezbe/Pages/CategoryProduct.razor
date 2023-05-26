@@ -78,6 +78,6 @@
 
     async void GoToDetails(int id)
     {
-        navManager.NavigateTo($"/product-details/{id}");
+        navManager.NavigateTo($"/product-details/{id}/{category.CategoryName}");
     }
 }

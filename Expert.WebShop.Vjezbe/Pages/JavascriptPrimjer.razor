@@ -1,0 +1,29 @@
+﻿@page "/javascript"
+@inject IJSRuntime jsRun
+
+<h3 class="primjer">JavascriptPrimjer</h3>
+
+    @test
+
+@code {
+    private IJSObjectReference? jsModule;
+    public string test;
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            firstRender = false;
+            jsModule = await jsRun.InvokeAsync<IJSObjectReference>(
+     "import", "./Pages/JavascriptPrimjer.razor.js");
+            var nasafunkcija = await jsModule.InvokeAsync<string>("nasKupus", "Take some input:"); // Prompt
+            test = nasafunkcija;
+            StateHasChanged();
+        }
+        else
+        {
+            await jsModule.InvokeAsync<string>("sayHi", "Petar"); // Prompt
+        }
+       
+      
+    }
+}
