@@ -11,6 +11,7 @@
     <h1>@category.CategoryName</h1>
 
     <p>@category.CategoryDescription</p>
+    <img src="@category.ImagePath" width="300px" />
 
     @foreach (var item in products)
     {
@@ -20,7 +21,7 @@
             @item.ProductPrice
             <br>
             @item.ProductDescription
-
+           
             <button class="btn-success" @onclick="()=>GoToDetails(item.Id)">Detalji</button>
         </div>
     }

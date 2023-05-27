@@ -1,6 +1,7 @@
 ﻿@page "/shopping-cart"
 @using Models;
 @inject ShoppingCartInMemory shoppingCartInMemory
+@inject NavigationManager navManager;
 <h3>CartDetails</h3>
 
 <h4>Total cash: @sumDiscount Eur</h4>
@@ -64,6 +65,8 @@
 <p>
     Ukupno cijena za proizvode: @sum 
 </p>
+
+<button class="btn-success" @onclick="Checkout">Kupi</button>
 @code {
 
     double sumDiscount = 0;
@@ -71,6 +74,12 @@
     protected override async Task OnInitializedAsync()
     {
         await Discount();
+    }
+
+    public async Task Checkout()
+    {
+
+        navManager.NavigateTo("/checkout");
     }
     public async Task Decrement(int prodId)
     {
