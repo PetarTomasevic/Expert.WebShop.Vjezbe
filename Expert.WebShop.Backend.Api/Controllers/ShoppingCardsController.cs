@@ -24,21 +24,30 @@ namespace Expert.WebShop.Backend.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ShoppingCard>>> GetShoppingCards()
         {
-          if (_context.ShoppingCards == null)
-          {
-              return NotFound();
-          }
-            return await _context.ShoppingCards.ToListAsync();
+            List<ShoppingCard> sc = new List<ShoppingCard>();
+            if (_context.ShoppingCards == null)
+            {
+                return NotFound();
+            }
+            try
+            {
+                sc = await _context.ShoppingCards.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                ex.ToString();
+            }
+            return sc;
         }
 
         // GET: api/ShoppingCards/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ShoppingCard>> GetShoppingCard(int id)
         {
-          if (_context.ShoppingCards == null)
-          {
-              return NotFound();
-          }
+            if (_context.ShoppingCards == null)
+            {
+                return NotFound();
+            }
             var shoppingCard = await _context.ShoppingCards.FindAsync(id);
 
             if (shoppingCard == null)
@@ -85,10 +94,10 @@ namespace Expert.WebShop.Backend.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<ShoppingCard>> PostShoppingCard(ShoppingCard shoppingCard)
         {
-          if (_context.ShoppingCards == null)
-          {
-              return Problem("Entity set 'WebShopVjezba2Context.ShoppingCards'  is null.");
-          }
+            if (_context.ShoppingCards == null)
+            {
+                return Problem("Entity set 'WebShopVjezba2Context.ShoppingCards'  is null.");
+            }
             _context.ShoppingCards.Add(shoppingCard);
             await _context.SaveChangesAsync();
 

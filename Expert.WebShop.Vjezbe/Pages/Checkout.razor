@@ -35,7 +35,7 @@
             cartItem.OrderId = orderId;
             cartItem.ProductId = item.ProductId;
             cartItem.OrderedByName = ImeOsobe;
-            cartItem.PricePerProduct = (float)item.Product.ProductPrice;
+            cartItem.PricePerProduct = item.Product.ProductPrice;
             cartItem.OrderedByEmail = Email;
             cartItem.ProductDiscount = item.Product.Discount;
             if (cartItem.ProductDiscount > 0)
@@ -45,11 +45,11 @@
                 var result = Math
                 .Round(Convert.ToDouble(item.Product.ProductPrice) - discount, 2);
                 result = result * item.NumberOfItems;
-                cartItem.TotalAmmount = (float)result;
+                cartItem.TotalAmmount = (decimal)result;
             }
             else
             {
-                cartItem.TotalAmmount = (float)item.Product.ProductPrice * (float)item.NumberOfItems;
+                cartItem.TotalAmmount = (decimal)item.Product.ProductPrice * (decimal)item.NumberOfItems;
             }
 
             cartItem.IsDelivered = false;
