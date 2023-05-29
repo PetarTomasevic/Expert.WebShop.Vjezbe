@@ -1,37 +1,47 @@
 ﻿@page "/"
-@inject IJSRuntime jsRun;
-<PageTitle>Index</PageTitle>
+@using Expert.WebShop.Vjezbe.Models;
+@inject HttpClient httpClient;
+@inject NavigationManager navManager;
 
-<h1 class="primjer">Hello, world!</h1>
+<h3>CategoryList</h3>
 
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
-
-<CategoryProduct CategoryName="Pero" Id="3"></CategoryProduct>
-
-@code
-{
-    private IJSObjectReference? jsModule;
-    protected override async void OnAfterRender(bool firstRender)
+<ul>
+    @foreach (var item in categories)
     {
+        <li>
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        @item.CategoryName
 
-        if (firstRender)
-        {
-     //       jsModule = await jsRun.InvokeAsync<IJSObjectReference>(
-     //"import", "./Pages/Index.razor.js");
+                    </h5>
 
+                    <p class="card-text"> @item.CategoryDescription</p>
+                    <br>
+                  
 
-           
-        }
-        else
-        {
-     
-        }
-        //var confirm = await jsRun.InvokeAsync<bool>("confirm", "Jeste li sigurni da želite obrisati stavku?"); /*invokanje JS u C# , odlazi u IF*/
-        //string prompted = await jsRun.InvokeAsync<string>("prompt", "Take some input:"); // Prompt
-        //string ourfunction = await jsModule.InvokeAsync<string>("showPrompt", "Take some input:"); // Prompt
-        //string ourfunction2 = await jsModule.InvokeAsync<string>("sayHi", "Petar"); // Prompt
-        
+                </div>
+            </div>
+        </li>
     }
+</ul>
+
+
+
+
+@code {
+    private List<Category> categories = new List<Category>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await httpClient.GetAsync("https://expertshopapi.azurewebsites.net/api/Categories");
+        if (result.IsSuccessStatusCode)
+        {
+            categories = await result.Content.ReadFromJsonAsync<List<Category>>();
+
+        }
+    }
+
+   
+
 }
