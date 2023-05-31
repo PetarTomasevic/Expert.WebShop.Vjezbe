@@ -48,7 +48,7 @@
 
     public async Task<List<ImageFilePath>> GetImages(int id)
     {
-        var apiResult = await httpClient.GetAsync($"https://localhost:7005/api/FilesUpload/get-product-photos/{id}");
+        var apiResult = await httpClient.GetAsync($"https://expertshopapi.azurewebsites.net/api/FilesUpload/get-product-photos/{id}");
         var images = new List<ImageFilePath>();
         if (apiResult.IsSuccessStatusCode)
         {

@@ -1,0 +1,44 @@
+﻿@page "/Admin/orders-list"
+@using Expert.WebShop.Vjezbe.Models;
+@inject HttpClient httpClient;
+@inject NavigationManager navManager;
+
+<h3>OrdersList</h3>
+
+<ul>
+    @foreach(var item in distinctOrders)
+    {
+       <li>
+           <h4>Narudžba šifra: @item.OrderId</h4>
+           <ul>
+               @foreach(var product in ordersList.Where(x=>x.OrderId==item.OrderId).ToList())
+                {
+                    <li>
+                        <p> Id proizvoda: @product.Id </p>
+                        <p>Cijena: @product.PricePerProduct</p>
+                        <p>Komada: @product.NumberOfItems</p>
+                        <p>Ukupno: @product.TotalAmmount</p>
+                    </li>
+                }
+            </ul>
+
+            <p>Kupac: @item.OrderedByName</p>
+       </li>
+
+    }
+</ul>
+        @code {
+        List<BuyItem> ordersList = new List<BuyItem>();
+        List<BuyItem> distinctOrders = new List<BuyItem>();
+        protected override async Task OnInitializedAsync()
+        {
+            var result = await httpClient.GetAsync("https://expertshopapi.azurewebsites.net/api/ShoppingCards");
+            if (result.IsSuccessStatusCode)
+            {
+                ordersList = await result.Content.ReadFromJsonAsync<List<BuyItem>>();
+
+                distinctOrders = ordersList.DistinctBy(x=>x.OrderId).ToList();
+
+        }
+    }
+}

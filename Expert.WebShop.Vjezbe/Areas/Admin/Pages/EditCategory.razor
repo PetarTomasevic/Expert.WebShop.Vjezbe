@@ -51,6 +51,7 @@
         }
     }
 
+
    
     private async Task CategoryEdit()
     {
@@ -58,7 +59,7 @@
 
         if (result.IsSuccessStatusCode)
         {
-            navManager.NavigateTo("Admin/category-list");
+            navManager.NavigateTo("Admin/list-products");
         }
         else
         {

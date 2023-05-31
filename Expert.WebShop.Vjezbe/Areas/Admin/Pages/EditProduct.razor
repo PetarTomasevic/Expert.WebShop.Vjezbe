@@ -2,8 +2,57 @@
 @inject HttpClient Http
 @using System.IO
 @using Expert.WebShop.Vjezbe.Models;
+@inject HttpClient httpClient;
+@inject NavigationManager navManager;
 <h3>ProductEdit</h3>
+<form @onsubmit="EditProductItem">
+    <div class="row mb-3">
+        <label for="ProductName" class="col-sm-2 col-form-label">Product Name</label>
+        <div class="col-sm-10">
+            <input type="text" @bind-value="product.ProductName" class="form-control" id="ProductName">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="ProductDescription" class="col-sm-2 col-form-label">Product Description</label>
+        <div class="col-sm-10">
+            <input type="text" @bind-value="product.ProductDescription" class="form-control" id="ProductDescription">
+        </div>
+    </div>
 
+    <div class="row mb-3">
+
+        <label for="SelectCat" class="col-sm-2 col-form-label">Product Description</label>
+        <div class="col-sm-10">
+            <select @onchange=@(SelectCategory)  class="form-control" id="SelectCat">
+                   
+            <option value="">--Select--</option>
+            @foreach (var cat in categories)
+            {
+                    if (cat.Id == product.CategoryId)
+                    {
+                        <option value="@cat.Id" selected>@cat.CategoryName</option>
+                    }
+                    else
+                    {
+                        <option value="@cat.Id" >@cat.CategoryName</option>
+                    }
+                }
+        </select>
+        </div>
+    </div>
+  
+
+    <div class="row mb-3">
+        <label for="ProductPrice" class="col-sm-2 col-form-label">Product Price</label>
+        <div class="col-sm-10">
+            <input type="text" @bind-value="product.ProductPrice" class="form-control" id="ProductPrice">
+        </div>
+    </div>
+
+   
+    <button type="submit" class="btn btn-primary">Edit Product</button>
+
+</form>
 
 <form @onsubmit="OnSubmit">
     <InputFile OnChange="OnInputFileChange" multiple />
@@ -17,8 +66,54 @@
     public int Id { get; set; }
     string Message = "No file(s) selected";
     IReadOnlyList<IBrowserFile> selectedFiles;
+    Product product = new Product();
+    List<Category> categories = new List<Category>();
+    private bool IsError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var result = await httpClient.GetAsync($"https://expertshopapi.azurewebsites.net/api/Products/{Id}");
+        if (result.IsSuccessStatusCode)
+        {
+            product = await result.Content.ReadFromJsonAsync<Product>();
+
+            categories = await CategoryList();
+        }
+    }
+
+    public async void EditProductItem()
+    {
+        var result = await httpClient.PutAsJsonAsync($"{Constants.BaseUrl}/Products/{product.Id}", product);
+
+        if (result.IsSuccessStatusCode)
+        {
+            navManager.NavigateTo("Admin/list-products");
+        }
+        else
+        {
+            IsError = true;
+            StateHasChanged();
+        }
+
+    }
 
 
+    private async Task SelectCategory(ChangeEventArgs e)
+    {
+        product.CategoryId = Convert.ToInt32( e.Value.ToString());
+    }
+
+    protected async Task<List<Category>> CategoryList()
+    {
+        var result = await httpClient.GetAsync("https://expertshopapi.azurewebsites.net/api/Categories");
+        if (result.IsSuccessStatusCode)
+        {
+            categories = await result.Content.ReadFromJsonAsync<List<Category>>();
+
+        }
+        return categories;
+    }
     private void OnInputFileChange
     (InputFileChangeEventArgs e)
     {
@@ -45,7 +140,7 @@
                 ms.Close();
 
                 var upload = await Http.PostAsJsonAsync<UploadedFile>
-        ("https://localhost:7005/api/FilesUpload", uploadedFile);
+        ("https://expertshopapi.azurewebsites.net/api/FilesUpload", uploadedFile);
 
                 if (upload.IsSuccessStatusCode)
                 {
