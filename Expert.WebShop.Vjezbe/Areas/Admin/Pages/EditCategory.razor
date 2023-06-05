@@ -25,7 +25,7 @@
     <div class="row mb-3">
         <div class="col-sm-10 offset-sm-2">
             <div class="form-check">
-                <input class="form-check-input" @bind-value="category.IsHidden" type="checkbox" id="IsHidden">
+                <input class="form-check-input" @bind-value="category.IsHidden" @oninput="@ChangeRadioValue" type="checkbox" id="IsHidden">
                 <label class="form-check-label" for="IsHidden">
                     Is Hidden
                 </label>
@@ -51,8 +51,19 @@
         }
     }
 
+    private async Task ChangeRadioValue()
+    {
+        if (category.IsHidden==true)
+        {
+            category.IsHidden = false;
+        }
+        else
+        {
+            category.IsHidden = true;
+        }
+        
+    }
 
-   
     private async Task CategoryEdit()
     {
         var result = await httpClient.PutAsJsonAsync($"https://expertshopapi.azurewebsites.net/api/Categories/{Id}", category);
